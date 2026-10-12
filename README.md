@@ -14,9 +14,9 @@
 | ChatGPT | chatgpt.com / chat.openai.com | 内部 API（Markdown 原文，100% 保真） | 不依赖 DOM，最稳 |
 | Claude | claude.ai | 内部 API（Markdown 原文，100% 保真） | 不依赖 DOM，最稳 |
 | 通义千问 | tongyi.aliyun.com / tongyi.com / qianwen.com | DOM 抓取 | ✅ 2026-10 真实浏览器实测校准（含真实 DOM 测试锁定） |
+| DeepSeek | chat.deepseek.com | DOM 抓取 + KaTeX 公式还原 | ✅ 2026-10 修复虚拟列表侧边栏；含调研 hash class + 语义化兜底 |
+| 小米 MiMo | **aistudio.xiaomimimo.com**（对话界面）/ mimo.mi.com（官网） | DOM 抓取（通用兜底 + 启发式角色判定） | ⚠️ 需小米账号登录，建议用🔧诊断确认 |
 | Gemini | gemini.google.com | DOM 抓取 + MathJax 公式还原 | ⚠️ 公开结构 + 兜底，首次使用请用🔧诊断确认 |
-| DeepSeek | chat.deepseek.com | DOM 抓取 + KaTeX 公式还原 | ⚠️ 已强制登录，`ds-` 前缀 class 已确认；建议登录后用🔧诊断确认 |
-| 小米 MiMo | mimo.mi.com | DOM 抓取（通用兜底 + 启发式角色判定） | ⚠️ 需小米账号登录，建议用🔧诊断确认 |
 
 > 新增平台只需加一个 adapter 文件（见下文「如何新增平台」）。
 
@@ -139,11 +139,12 @@ ai-chat-md-exporter/
 
 | 元素 | 处理方式 |
 |---|---|
-| 代码块 | 语言从 `code.language-x` / `pre[data-lang]` / 代码块头部多源识别，输出围栏代码块 |
+| 代码块 | 语言从 `code.language-x` / `pre[data-lang]` / 代码块头部多源识别，输出围栏代码块；头部语言栏自动移除不泄漏 |
 | 数学公式 | KaTeX / MathJax 渲染结果中提取 `annotation[encoding="application/x-tex"]` 还原 LaTeX；块级 `$$…$$`、行内 `$…$` |
 | 表格 / 任务列表 | Turndown GFM 插件 |
-| 思考过程（R1/thinking） | 识别类名含 think/reason 的块，转为 `> 🧠 思考过程` 引用块 |
-| 图片 | 兼容懒加载 `data-src`/`srcset`，保留 DataURI 与链接 |
+| 思考过程（R1/thinking） | **不导出**（按需求直接移除，Claude API 路径同样跳过 thinking 内容） |
+| 图片 | **仅保留正文图片**；favicon / 头像 / logo / 徽标 / 小尺寸图标（≤24px）自动过滤；兼容懒加载 `data-src`/`srcset` |
+| 用户提问 | 包裹为 Markdown 引用块（`>`），与正文形成视觉区分 |
 | ChatGPT/Claude | 直接取平台返回的 Markdown **原文**，不经 DOM 转换 |
 
 ### 健壮性设计
@@ -171,6 +172,20 @@ npm run icons        # 重新生成图标
 ```
 
 测试覆盖：6 平台注册识别、Gemini/ChatGPT DOM 抓取、未知结构兜底、全链路导出、面板挂载、32 项排版保真规则。
+
+## 更新日志
+
+### v1.0.2（2026-10-13）
+- **不再导出思考过程**：DeepSeek R1 / Claude thinking 块直接移除（此前转为引用块保留）
+- **过滤链接图标**：favicon / 头像 / logo / 徽标 / ≤24px 小图片不再进入 md，只保留正文图片
+- **强化用户提问显示**：用户提问内容包裹为 Markdown 引用块（`>`），与助手正文形成视觉区分
+- **修复**：代码块头部语言栏在 `<code class="language-xxx">` 存在时不再泄漏（`[class*="lang"]` 误匹配 language class 的 bug）
+
+### v1.0.1（2026-10-12）
+- **修复**：小米 MiMo 对话界面域名为 `aistudio.xiaomimimo.com`（原仅匹配 mimo.mi.com 导致悬浮球不出现）
+- **修复**：DeepSeek 刷新列表获取不到历史会话 —— 侧边栏是**虚拟列表**（DOM 会回收），重写为「先滚加载 → 再自上而下按序收集」两阶段策略；补充调研到的真实 hash class（`.b8812f16` 面板 / `._546d736` 会话项）+ 语义化兜底
+- **新增**：侧边栏通用兜底收集（选择器全失效时自动启用，过滤功能菜单项）
+- **改进**：会话激活改为「按标题边滚边找」，适配虚拟列表；消息收集同样改为虚拟列表安全的两阶段策略
 
 ## 已知限制
 

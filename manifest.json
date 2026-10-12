@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AI 对话导出助手 · Chat to Markdown",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "将 ChatGPT、Claude、Gemini、DeepSeek、通义千问、小米 MiMo 等平台的对话记录，完整保留排版导出为 Markdown。支持按会话、按单次问答勾选，多次问答合并为一个 md 文件。",
   "permissions": ["downloads", "storage"],
   "host_permissions": [
@@ -14,7 +14,8 @@
     "https://tongyi.aliyun.com/*",
     "https://www.qianwen.com/*",
     "https://qianwen.com/*",
-    "https://mimo.mi.com/*"
+    "https://mimo.mi.com/*",
+    "https://aistudio.xiaomimimo.com/*"
   ],
   "background": {
     "service_worker": "src/background.js"
@@ -31,7 +32,8 @@
         "https://tongyi.aliyun.com/*",
         "https://www.qianwen.com/*",
         "https://qianwen.com/*",
-        "https://mimo.mi.com/*"
+        "https://mimo.mi.com/*",
+        "https://aistudio.xiaomimimo.com/*"
       ],
       "js": [
         "src/lib/vendor/turndown.min.js",

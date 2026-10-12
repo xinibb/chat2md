@@ -45,11 +45,16 @@ const fixture = `
     return 1</code></pre>
 <pre data-lang="javascript">console.log("hi")</pre>
 <div class="md-code-block"><div class="md-code-block-header">Go 1.22</div><pre><code>package main</code></pre></div>
+<div class="md-code-block"><div class="md-code-block-header">Python 3</div><pre><code class="language-python">print("hi")</code></pre></div>
 <p>行内公式 <span class="katex"><span class="katex-mathml"><math><annotation encoding="application/x-tex">a^2+b^2</annotation></math></span></span> 结束</p>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math><annotation encoding="application/x-tex">E = mc^2</annotation></math></span></span></span>
 <mjx-container class="MathJax" jax="SVG"><mjx-assistive-mml><math><annotation encoding="application/x-tex">\\frac{1}{2}</annotation></math></mjx-assistive-mml></mjx-container>
 <mjx-container class="MathJax" jax="SVG" display="true"><mjx-assistive-mml><math><annotation encoding="application/x-tex">\\int_0^1 x\\,dx</annotation></math></mjx-assistive-mml></mjx-container>
 <p><img data-src="https://example.com/a.png" alt="示例图"></p>
+<img class="favicon" src="https://www.baidu.com/favicon.ico" alt="">
+<img src="https://www.google.com/s2/favicons?domain=zhihu.com" alt="知乎图标">
+<img class="avatar" src="https://example.com/avatar.png" alt="用户头像">
+<img src="https://example.com/photo.png" width="600" alt="示意图">
 <div class="ds-think-content">先让我想想这个问题</div>
 <p>公式script：<script type="math/tex">x_1</script> 完</p>
 `;
@@ -73,13 +78,18 @@ check('表格', md.includes('| 列A | 列B |') && md.includes('| --- | --- |') &
 check('代码块-语言class', md.includes('```python\ndef f():\n    return 1\n```'));
 check('代码块-data-lang', md.includes('```javascript\nconsole.log("hi")\n```'));
 check('代码块-头部语言', md.includes('```go\npackage main\n```'));
+check('代码块-头部语言+code语言class不泄漏', md.includes('```python\nprint("hi")\n```') && !md.includes('Python 3'), md);
 check('KaTeX行内公式', md.includes('$a^2+b^2$'));
 check('KaTeX块级公式', md.includes('$$\nE = mc^2\n$$'));
 check('MathJax行内公式', md.includes('$\\frac{1}{2}$'));
 check('MathJax块级公式', md.includes('$$\n\\int_0^1 x\\,dx\n$$'));
 check('math/tex script', md.includes('$x_1$'));
 check('图片懒加载data-src', md.includes('![示例图](https://example.com/a.png)'));
-check('思考过程块', md.includes('> 🧠 **思考过程**') && md.includes('先让我想想'));
+check('正文图片保留', md.includes('![示意图](https://example.com/photo.png)'));
+check('favicon图片已过滤', !md.includes('favicon.ico') && !md.includes('baidu.com'), md);
+check('google favicon服务已过滤', !md.includes('s2/favicons'), md);
+check('头像图片已过滤', !md.includes('avatar.png'), md);
+check('思考过程块已移除', !md.includes('🧠 **思考过程**') && !md.includes('先让我想想'), md);
 check('无连续3空行(围栏外)', !/(^|[^`])\n\n\n[^`]/.test(md.replace(/```[\s\S]*?```/g, '§')));
 check('代码块内空行保留', md.includes('```python\ndef f():\n    return 1\n```'));
 
@@ -98,6 +108,7 @@ check('front-matter', doc.startsWith('---\ntitle: "测试会话"'));
 check('来源标注', doc.includes('> 📥 来源平台：DeepSeek'));
 check('提问标题', doc.includes('## 🧑 提问 1 · 2026-10-10 14:00'));
 check('回答标题', doc.includes('## 🤖 回答 1 · 2026-10-10 14:01'));
+check('用户提问引用块强化', doc.includes('> 你好') && !/\n你好！/.test(doc.split('## 🧑 提问 1')[1].split('## 🤖')[0].replace('> 你好', '')), doc);
 check('问答分隔', doc.includes('\n---\n'));
 
 // ---------- buildDoc 多会话合并 ----------

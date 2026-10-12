@@ -52,11 +52,9 @@
   function buildContent(m) {
     var parts = [];
     (m.content || []).forEach(function (c) {
+      // thinking 思考过程按需求不导出
       if (c.type === 'text' && c.text) parts.push(c.text.trim());
-      else if (c.type === 'thinking' && c.thinking) {
-        var quoted = String(c.thinking).trim().split('\n').map(function (l) { return '> ' + l; }).join('\n');
-        parts.push('> 🧠 **思考过程**\n>\n' + quoted);
-      } else if (c.type === 'tool_use') {
+      else if (c.type === 'tool_use') {
         parts.push('```json\n// 工具调用：' + (c.name || 'tool') + '\n' +
           JSON.stringify(c.input || {}, null, 2) + '\n```');
       }

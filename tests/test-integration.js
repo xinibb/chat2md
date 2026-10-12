@@ -183,23 +183,59 @@ async function testPipeline() {
     </main>`;
   const { AIEXP } = makePage('chat.deepseek.com', body);
   const ad = AIEXP.adapters.detect('chat.deepseek.com');
-  const convs = await AIEXP.scraper.listConversations(ad);
-  check('列表 1 条会话', convs.length === 1, convs.length);
-  const turns = await AIEXP.scraper.loadTurns(ad, { title: convs[0].title, url: 'https://chat.deepseek.com/a/chat/s/1', el: null });
+
+  // 会话列表（虚拟列表安全路径）
+  const convs = await AIEXP.scraper.loadConversationList(ad);
+  check('loadConversationList 1 条会话', convs.length === 1, convs.map(c => c.title));
+  check('会话无元素引用（虚拟安全）', convs[0] && convs[0].el === null);
+  check('会话带 URL', convs[0] && convs[0].url && convs[0].url.indexOf('/a/chat/s/1') >= 0, convs[0] && convs[0].url);
+
+  // 按标题定位会话元素（虚拟列表安全）
+  const found = await AIEXP.scraper.findConvElement(ad, { title: 'Rust 学习' });
+  check('findConvElement 定位到元素', !!found && found.tagName === 'A', found && found.tagName);
+
+  // loadTurns（跳过激活：标题不匹配且无 URL，直接抓当前视图）
+  const turns = await AIEXP.scraper.loadTurns(ad, { title: '不存在的会话', url: null, el: null });
   check('loadTurns 2 条', turns.length === 2, turns.length);
   check('turn 含 md', turns.every(t => typeof t.md === 'string' && t.md.length > 0));
   const allMd = turns.map(t => t.md).join('\n');
-  check('思考过程保留', allMd.includes('🧠 **思考过程**') || allMd.includes('先分析需求'), allMd);
+  check('思考过程已移除', !allMd.includes('先分析需求'), allMd);
   check('代码块语言提取', allMd.includes('```rust'), allMd);
   check('公式保留', allMd.includes('$x^2$'), allMd);
   const doc = AIEXP.md.buildDoc({ platformName: ad.name, title: convs[0].title, url: 'https://chat.deepseek.com/a/chat/s/1', turns });
   check('文档含 front-matter', doc.startsWith('---'));
   check('文档含问答标题', doc.includes('## 🧑 提问 1') && doc.includes('## 🤖 回答 1'));
+  check('用户提问为引用块', doc.includes('> 推荐本书'), doc);
   check('文档含来源', doc.includes('来源平台：DeepSeek'));
+}
+
+// ---------- 5b. 侧边栏通用兜底 ----------
+console.log('== 侧边栏通用兜底 ==');
+async function testGenericSidebar() {
+  // 选择器完全失灵的平台结构（无任何可识别 class）
+  const body = `
+    <aside>
+      <div class="menu"><div>新对话</div><div>设置</div></div>
+      <div class="list">
+        <div class="row"><a href="/chat/1">如何学习 Rust</a></div>
+        <div class="row"><a href="/chat/2">周报怎么写</a></div>
+      </div>
+    </aside>
+    <main><div class="m">hi</div></main>`;
+  const { AIEXP } = makePage('unknown-platform.com', body);
+  // 构造一个 selectors 全不命中的假 adapter
+  const fake = {
+    id: 'fake', name: 'Fake', match: ['unknown-platform.com'],
+    selectors: { sidebar: 'aside', convItem: '.nonexistent-xyz', convTitle: 'span' }
+  };
+  const out = await AIEXP.scraper.loadConversationList(fake);
+  check('通用兜底抓到 2 条会话', out.length === 2, out.map(c => c.title));
+  check('过滤功能菜单', !out.some(c => /新对话|设置/.test(c.title)), out.map(c => c.title));
 }
 
 (async () => {
   await testPipeline();
+  await testGenericSidebar();
 
   // ---------- 6. 面板冒烟 ----------
   console.log('== 面板挂载冒烟 ==');

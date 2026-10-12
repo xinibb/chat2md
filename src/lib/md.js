@@ -27,11 +27,28 @@
     return scope || null;
   }
 
+  /**
+   * 在代码块容器内找头部/语言栏元素。
+   * 注意：[class*="lang"] 会误匹配 <code class="language-xxx">（"language" 含 "lang"），
+   * 必须排除 pre/code 内部及自身的元素。
+   */
+  function pickHeaderEl(scope) {
+    if (!scope) return null;
+    var cands = scope.querySelectorAll('[class*="lang"],[class*="header"]');
+    for (var i = 0; i < cands.length; i++) {
+      var c = cands[i];
+      if (c.tagName === 'PRE' || c.tagName === 'CODE') continue;
+      if (c.closest('pre')) continue;
+      return c;
+    }
+    return null;
+  }
+
   /** 找代码块的头部/语言栏元素（仅在代码块容器内或 pre 前一个兄弟，避免误删正文） */
   function findHeaderEl(pre) {
     var scope = codeBlockScope(pre);
     if (scope) {
-      return scope.querySelector('[class*="lang"]') || scope.querySelector('[class*="header"]');
+      return pickHeaderEl(scope);
     }
     var sib = pre.previousElementSibling;
     if (sib && !sib.querySelector('pre')) {
@@ -68,9 +85,8 @@
     var lang = extractLang(pre);
     try { pre.setAttribute('data-extracted-lang', lang || ''); } catch (e) { /* ignore */ }
     var scope = codeBlockScope(pre);
-    var header = null;
-    if (scope) header = scope.querySelector('[class*="lang"]') || scope.querySelector('[class*="header"]');
-    else {
+    var header = scope ? pickHeaderEl(scope) : null;
+    if (!header && !scope) {
       var sib = pre.previousElementSibling;
       if (sib && !sib.querySelector('pre')) {
         var cls = (sib.className || '').toString();
@@ -175,21 +191,19 @@
     }
   });
 
-  // —— 思考过程块（DeepSeek R1 / Claude thinking）→ 引用块 ——
+  // —— 思考过程块（DeepSeek R1 / Claude thinking）：按需求不导出，直接丢弃 ——
   service.addRule('thinkingBlock', {
     filter: function (node) {
       if (node.nodeName !== 'DIV' && node.nodeName !== 'DETAILS' && node.nodeName !== 'SECTION') return false;
       var cls = (node.className || '').toString();
       return /think|reason|thought/i.test(cls);
     },
-    replacement: function (content, node) {
-      if (!content || !content.trim()) return '';
-      var quoted = content.trim().split('\n').map(function (l) { return '> ' + l; }).join('\n');
-      return '\n\n> 🧠 **思考过程**\n>\n' + quoted + '\n\n';
+    replacement: function () {
+      return '';
     }
   });
 
-  // —— 图片：兼容懒加载 data-src / srcset，保留 DataURI ——
+  // —— 图片：过滤图标类图片（favicon / 头像 / 徽标 / 小尺寸），只保留正文图片 ——
   service.addRule('image', {
     filter: 'img',
     replacement: function (content, node) {
@@ -198,8 +212,23 @@
         src = node.getAttribute('srcset').split(/\s+/)[0];
       }
       if (!src) return '';
-      var alt = (node.getAttribute('alt') || '').replace(/[[\]]/g, '');
-      return '![' + alt + '](' + src + ')';
+      var cls = (node.className || '').toString().toLowerCase();
+      var alt = (node.getAttribute('alt') || '').toLowerCase();
+      // 类名 / alt 含图标语义
+      if (/icon|favicon|avatar|logo|badge|emoji/.test(cls)) return '';
+      if (/icon|favicon|avatar|logo|badge/.test(alt)) return '';
+      // 链接旁 favicon（各平台 CDN 特征）
+      if (/favicon|\.ico(\?|$)/i.test(src)) return '';
+      // 小尺寸图标（HTML 属性 + 实际渲染）
+      var w = parseInt(node.getAttribute('width') || '', 10);
+      var h = parseInt(node.getAttribute('height') || '', 10);
+      if ((w && w <= 24) || (h && h <= 24)) return '';
+      try {
+        var r = node.getBoundingClientRect();
+        if (r.width > 0 && r.width <= 24 && r.height <= 24) return '';
+      } catch (e) { /* ignore */ }
+      var altText = (node.getAttribute('alt') || '').replace(/[[\]]/g, '');
+      return '![' + altText + '](' + src + ')';
     }
   });
 
@@ -291,7 +320,12 @@
         else { asstIdx++; label = '回答 ' + asstIdx; icon = '🤖'; }
         lines.push('## ' + icon + ' ' + label + (t.time ? ' · ' + t.time : ''));
         lines.push('');
-        lines.push((t.md || '').trim());
+        if (t.role === 'user') {
+          // 用户提问包引用块：与正文形成视觉区分（缩进 + 左侧竖线 + 多数渲染器置灰）
+          lines.push(quoteBlock((t.md || '').trim()));
+        } else {
+          lines.push((t.md || '').trim());
+        }
         lines.push('');
         if (i < turns.length - 1) lines.push('---', '');
       });
@@ -316,6 +350,14 @@
       .replace(/[\\/:*?"<>|\r\n\t]/g, '_')
       .replace(/\s+/g, ' ')
       .slice(0, 80) || 'export';
+  }
+
+  /** 多行文本转 Markdown 引用块（空行转为裸 > 保持块连续） */
+  function quoteBlock(text) {
+    if (!text) return '';
+    return text.split('\n').map(function (l) {
+      return l.trim() ? '> ' + l : '>';
+    }).join('\n');
   }
 
   /** 下载 md 文件（blob + a.click，附 BOM 防 Windows 记事本乱码；失败回退 background dataURL） */
