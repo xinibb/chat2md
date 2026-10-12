@@ -1,0 +1,20 @@
+{
+  "name": "ai-chat-md-exporter",
+  "version": "1.0.0",
+  "description": "浏览器扩展：将各 AI 平台网页对话完整保留排版导出为 Markdown，支持按会话/按问答勾选合并",
+  "private": true,
+  "scripts": {
+    "test": "node tests/test-md.js && node tests/test-integration.js",
+    "test:md": "node tests/test-md.js",
+    "test:integration": "node tests/test-integration.js",
+    "icons": "python tools/make_icons.py"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

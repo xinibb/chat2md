@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "AI 对话导出助手 · Chat to Markdown",
+  "version": "1.0.0",
+  "description": "将 ChatGPT、Claude、Gemini、DeepSeek、通义千问、小米 MiMo 等平台的对话记录，完整保留排版导出为 Markdown。支持按会话、按单次问答勾选，多次问答合并为一个 md 文件。",
+  "permissions": ["downloads", "storage"],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://chat.deepseek.com/*",
+    "https://www.tongyi.com/*",
+    "https://tongyi.aliyun.com/*",
+    "https://www.qianwen.com/*",
+    "https://qianwen.com/*",
+    "https://mimo.mi.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://chat.deepseek.com/*",
+        "https://www.tongyi.com/*",
+        "https://tongyi.aliyun.com/*",
+        "https://www.qianwen.com/*",
+        "https://qianwen.com/*",
+        "https://mimo.mi.com/*"
+      ],
+      "js": [
+        "src/lib/vendor/turndown.min.js",
+        "src/lib/vendor/turndown-plugin-gfm.min.js",
+        "src/adapters/index.js",
+        "src/adapters/chatgpt.js",
+        "src/adapters/claude.js",
+        "src/adapters/gemini.js",
+        "src/adapters/deepseek.js",
+        "src/adapters/qwen.js",
+        "src/adapters/mimo.js",
+        "src/lib/md.js",
+        "src/content/scraper.js",
+        "src/content/panel.js",
+        "src/content/index.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "AI 对话导出助手"
+  },
+  "icons": {
+    "16": "src/assets/icon16.png",
+    "48": "src/assets/icon48.png",
+    "128": "src/assets/icon128.png"
+  }
+}

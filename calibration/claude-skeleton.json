@@ -1,0 +1,69 @@
+{
+ "tag": "main",
+ "cls": "",
+ "text": "",
+ "kids": [
+  {
+   "tag": "div",
+   "cls": "page-builder-sections locale-text",
+   "text": "",
+   "kids": [
+    {
+     "tag": "section",
+     "cls": "SectionWrapper-module-scss-module__NFbz_a__wrapper theme-main HeroPictogram-module-scss-mo",
+     "text": "",
+     "kids": [
+      {
+       "tag": "div",
+       "cls": "container",
+       "text": "",
+       "kids": [
+        {
+         "tag": "div",
+         "cls": "AnimatedReveal-module-scss-module__8zH9eW__container AnimatedReveal-module-scss-module__8z",
+         "text": "",
+         "kids": [
+          {
+           "tag": "div",
+           "cls": "Illustration-module-scss-module__pBGuRG__base Illustration-module-scss-module__pBGuRG__pic",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": "",
+             "text": ""
+            }
+           ]
+          },
+          {
+           "tag": "h1",
+           "cls": "Heading-module-scss-module__AyGdUq__heading text-display-2-serif Heading-module-scss-modul",
+           "text": ""
+          },
+          {
+           "tag": "p",
+           "cls": "HeroPictogram-module-scss-module__ubGjQq__subheadline text-body-large-2",
+           "text": ""
+          },
+          {
+           "tag": "div",
+           "cls": "HeroPictogram-module-scss-module__ubGjQq__ctaGroup",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": "ButtonGroup-module-scss-module__HSKYlq__buttonGroup HeroPictogram-module-scss-module__ubGj",
+             "text": ""
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

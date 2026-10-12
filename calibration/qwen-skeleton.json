@@ -1,0 +1,240 @@
+{
+ "tag": "body",
+ "cls": "",
+ "text": "",
+ "kids": [
+  {
+   "tag": "svg",
+   "cls": "",
+   "text": "",
+   "kids": [
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "symbol",
+     "cls": "",
+     "text": "",
+     "kids": [
+      {
+       "tag": "path",
+       "cls": "",
+       "text": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "div",
+   "cls": "",
+   "text": "",
+   "kids": [
+    {
+     "tag": "div",
+     "cls": "flex",
+     "text": "",
+     "kids": [
+      {
+       "tag": "div",
+       "cls": "relative flex size-full flex-nowrap overflow-hidden bg-primary",
+       "text": "",
+       "kids": [
+        {
+         "tag": "aside",
+         "cls": "bg-pc-sidebar h-full z-40 min-w-0 overflow-hidden relative transition-[width] duration-300",
+         "text": "",
+         "kids": [
+          {
+           "tag": "div",
+           "cls": "w-[16rem] absolute inset-y-0 right-0",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": "flex h-full min-w-64 shrink-0 flex-col overflow-hidden whitespace-nowrap bg-pc-sidebar",
+             "text": ""
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "tag": "div",
+         "cls": "flex absolute top-0 left-0 h-full min-w-0 bg-[--ty-background-mask5] backdrop-blur-[1.5px]",
+         "text": "",
+         "kids": [
+          {
+           "tag": "div",
+           "cls": "bg-gray-button-hover relative flex-0 h-full min-w-0 overflow-hidden before:content-[''] be",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": "w-[16rem] mobile:w-[18.75rem] h-full transition-transform duration-300 -translate-x-full",
+             "text": ""
+            }
+           ]
+          },
+          {
+           "tag": "div",
+           "cls": "z-40 flex h-full flex-1 flex-col",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": " h-14 w-full",
+             "text": ""
+            },
+            {
+             "tag": "div",
+             "cls": "w-full flex-1",
+             "text": ""
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "tag": "div",
+         "cls": "relative flex flex-1 flex-col overflow-hidden",
+         "text": "",
+         "kids": [
+          {
+           "tag": "div",
+           "cls": "bg-pc-sidebar p-1.5 [&:not(.snapshot-sidebar-collapsed_*)]:!pl-0",
+           "text": "",
+           "kids": [
+            {
+             "tag": "div",
+             "cls": "",
+             "text": ""
+            },
+            {
+             "tag": "div",
+             "cls": "",
+             "text": ""
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "h1",
+   "cls": "",
+   "text": "…"
+  },
+  {
+   "tag": "style",
+   "cls": "",
+   "text": "…"
+  },
+  {
+   "tag": "script",
+   "cls": "",
+   "text": "…"
+  },
+  {
+   "tag": "div",
+   "cls": "",
+   "text": ""
+  },
+  {
+   "tag": "div",
+   "cls": "",
+   "text": ""
+  },
+  {
+   "tag": "div",
+   "cls": "",
+   "text": ""
+  }
+ ]
+}
